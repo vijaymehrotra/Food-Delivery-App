@@ -1,6 +1,8 @@
-import 'package:food_delivery/data/api/repository.dart/cart_repo.dart';
+import 'package:flutter/material.dart';
+import 'package:food_delivery/data/repository.dart/cart_repo.dart';
 import 'package:food_delivery/models/cart_models.dart';
 import 'package:food_delivery/models/products_model.dart';
+import 'package:food_delivery/utils/colors.dart';
 import 'package:get/get.dart';
 
 class CartController extends GetxController {
@@ -9,7 +11,92 @@ class CartController extends GetxController {
   CartController({required this.cartRepo});
   Map<int, CartModel> _items = {};
 
-  void addItem(ProductModel product , int quantity){
-    _items.putIfAbsent(product.id! , () => null)
+  Map<int, CartModel> get items => _items;
+
+  void addItem(ProductModel product, int quantity) {
+    var totalQuantity = 0;
+    if (_items.containsKey(product.id)) {
+      _items.update(product.id!, (value) {
+        totalQuantity = value.quantity! + quantity;
+
+        return CartModel(
+            id: value.id,
+            name: value.name,
+            price: value.price,
+            img: value.img,
+            quantity: value.quantity! + quantity,
+            isExist: true,
+            time: DateTime.now().toString(),
+            product: product);
+      });
+      if (totalQuantity <= 0) {
+        _items.remove(product.id);
+        Get.snackbar("Item Count", "At Least Add 1 Item in your cart",
+            backgroundColor: AppColors.mainColor, colorText: Colors.white);
+      }
+    } else {
+      if (quantity > 0) {
+        _items.putIfAbsent(product.id!, () {
+          return CartModel(
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              img: product.img,
+              quantity: quantity,
+              isExist: true,
+              time: DateTime.now().toString(),
+              product: product);
+        });
+      } else {
+        Get.snackbar("Item Count", "At Least Add 1 Item in your cart",
+            backgroundColor: AppColors.mainColor, colorText: Colors.white);
+      }
+    }
+    update();
+  }
+
+  bool existInCart(ProductModel product) {
+    if (_items.containsKey(product.id)) {
+      return true;
+    }
+    return false;
+  }
+
+  int getQuantity(ProductModel product) {
+    var quantity = 0;
+    if (_items.containsKey(product.id)) {
+      _items.forEach((key, value) {
+        if (key == product.id) {
+          quantity = value.quantity!;
+        }
+      });
+    }
+    return quantity;
+  }
+
+  int get totalItems {
+    var totalQuantity = 0;
+
+    _items.forEach((key, value) {
+      totalQuantity += value.quantity!;
+    });
+
+    return totalQuantity;
+  }
+
+  List<CartModel> get getItems {
+    return _items.entries.map((e) {
+      return e.value;
+    }).toList();
+  }
+
+  int get totalAmount {
+    var total = 0;
+
+    _items.forEach((key, value) {
+      total += value.quantity!*value.price!;
+    });
+
+    return total;
   }
 }

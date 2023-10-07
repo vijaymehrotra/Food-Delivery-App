@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/data/api/repository.dart/popular_product_repo.dart';
+import 'package:food_delivery/controller/cart_controller.dart';
+import 'package:food_delivery/data/repository.dart/popular_product_repo.dart';
+import 'package:food_delivery/models/cart_models.dart';
 import 'package:food_delivery/models/products_model.dart';
-import 'package:food_delivery/pages/home/food/recommended_food_detail.dart';
+import 'package:food_delivery/pages/food/recommended_food_detail.dart';
 import 'package:food_delivery/utils/colors.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +14,7 @@ class PopularProductController extends GetxController {
 
   List<ProductModel> _popularProductList = [];
   List<ProductModel> get popularProductList => _popularProductList;
+  late CartController _cart;
 
   bool _isLoaded = false;
   bool get isLoaded => _isLoaded;
@@ -32,24 +35,64 @@ class PopularProductController extends GetxController {
 
   void setQuantity(bool plus) {
     if (plus) {
-      if (_quantity < 20) {
-        _quantity = _quantity + 1;
-      } else {
-        Get.snackbar("Item Count", "Maximum Limit Reached",
-            backgroundColor: AppColors.mainColor, colorText: Colors.white);
-      }
+      _quantity = checkQuantity(_quantity + 1);
     } else {
-      if (_quantity > 0) {
-        _quantity = _quantity - 1;
-      } else
-        Get.snackbar("Item Count", "You cant reduce more",
-            backgroundColor: AppColors.mainColor, colorText: Colors.white);
+      _quantity = checkQuantity(_quantity - 1);
+      print("decrement : " + _quantity.toString());
     }
     update();
   }
 
-  void initProduct() {
+  int checkQuantity(int quantity) {
+    if ((_inCartItems + quantity) < 0) {
+      Get.snackbar("Item Count", "You can,t reduce more!",
+          backgroundColor: AppColors.mainColor, colorText: Colors.white);
+      return quantity + 1;
+    } else if ((_inCartItems + quantity) > 20) {
+      Get.snackbar("Item Count", "You can,t add more!",
+          backgroundColor: AppColors.mainColor, colorText: Colors.white);
+      return quantity - 1;
+    } else {
+      return quantity;
+    }
+  }
+
+  void initProduct(ProductModel product, CartController cart) {
     _quantity = 0;
     _inCartItems = 0;
+    _cart = cart;
+
+    var exist = false;
+    exist = _cart.existInCart(product);
+
+    print("exist or not :" + exist.toString());
+
+    if (exist) {
+      _inCartItems = _cart.getQuantity(product);
+    }
+    print("The quantity in the cart is : " + _inCartItems.toString());
+  }
+
+  void addItem(ProductModel product) {
+    _cart.addItem(product, _quantity);
+
+    _quantity = 0;
+    _inCartItems = _cart.getQuantity(product);
+
+    _cart.items.forEach((key, value) {
+      print("The id id: " +
+          value.id.toString() +
+          " The quantity is " +
+          value.quantity.toString());
+    });
+    update();
+  }
+
+  int get totalItems {
+    return _cart.totalItems;
+  }
+
+  List<CartModel> get getItems {
+    return _cart.getItems;
   }
 }

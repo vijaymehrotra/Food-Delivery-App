@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/controller/popular_product_controller.dart';
 import 'package:food_delivery/controller/recommended_product_controller.dart';
-import 'package:food_delivery/pages/home/food_page_body.dart';
-import 'package:food_delivery/pages/home/main_food_page.dart';
+import 'package:food_delivery/pages/splash/splash_page.dart';
 import 'package:food_delivery/routes/routes_helper.dart';
-import 'package:food_delivery/utils/colors.dart';
 import 'package:get/get.dart';
 import 'helper/dependencies.dart' as dep;
 
@@ -25,8 +23,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      home: MainFoodPage(),
-      initialRoute: RoutesHelper.initial,
+      // home: SplashScreen(),
+      initialRoute: RoutesHelper.getSplashPage(),
       getPages: RoutesHelper.routes,
     );
   }
