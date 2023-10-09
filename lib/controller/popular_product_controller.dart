@@ -38,7 +38,7 @@ class PopularProductController extends GetxController {
       _quantity = checkQuantity(_quantity + 1);
     } else {
       _quantity = checkQuantity(_quantity - 1);
-      print("decrement : " + _quantity.toString());
+      // print("decrement : " + _quantity.toString());
     }
     update();
   }
@@ -65,12 +65,12 @@ class PopularProductController extends GetxController {
     var exist = false;
     exist = _cart.existInCart(product);
 
-    print("exist or not :" + exist.toString());
+    // print("exist or not :" +  exist.toString());
 
     if (exist) {
       _inCartItems = _cart.getQuantity(product);
     }
-    print("The quantity in the cart is : " + _inCartItems.toString());
+    // print("The quantity in the cart is : " + _inCartItems.toString());
   }
 
   void addItem(ProductModel product) {

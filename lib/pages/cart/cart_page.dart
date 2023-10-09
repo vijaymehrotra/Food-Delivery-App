@@ -222,12 +222,15 @@ class CartPage extends StatelessWidget {
                               BorderRadius.circular(Dimensions.radius20)),
                       child: Row(
                         children: [
-                          BigText(text:"\$"+ cartController.totalAmount.toString()),
+                          BigText(
+                              text:
+                                  "\$" + cartController.totalAmount.toString()),
                         ],
                       )),
                   GestureDetector(
                     onTap: () {
                       // popularProduct.addItem(product);
+                      cartController.addtoHistory();
                     },
                     child: Container(
                         padding: EdgeInsets.all(Dimensions.height20),

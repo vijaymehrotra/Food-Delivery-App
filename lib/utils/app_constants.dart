@@ -1,6 +1,9 @@
 // ignore_for_file: constant_identifier_names
 
 class AppConstant {
+
+  static const String CART_LIST = "Cart-list";
+  static const String CART_HISTORY = "cart-history-list";
   static const String APP_NAME = "DBFood";
   static const int APP_VERSION = 1;
 
